@@ -4,7 +4,7 @@ python flask has flask_limiter module, which can meet the requirement to limit r
 
   1) Use redis to store the call times for each ip address(I use my local redis server)
   2) pros: it is simple, and every key- IP address will have fixed expiration time (default 36s)
-  3) crons: It is fixed expiration time for each IP address, this can't deal with the problem that some requesters call frequently in the first half of an hour while have less calls in the other half of the hour.
+  3) cons: It is fixed expiration time for each IP address, this can't deal with the problem that some requesters call frequently in the first half of an hour while have less calls in the other half of the hour.
 
 
 # rate-limit2.py 
