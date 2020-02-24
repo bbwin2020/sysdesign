@@ -1,0 +1,729 @@
+python rate-limit2.py
+Source path:... rate-limit2.py
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+12:05:44.189821 call        38     def __init__(self):
+12:05:44.190101 line        39         self.lock = threading.Lock()
+12:05:44.190149 line        40         self.ratelimiterMap = {}
+12:05:44.190188 return      40         self.ratelimiterMap = {}
+Return value:.. None
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+Starting var:.. requests = 2
+Starting var:.. windowTimeInSec = 60
+12:05:44.190256 call        44     def addClient(self, clientId, requests=100, windowTimeInSec=3600):
+12:05:44.190340 line        46         with self.lock:
+12:05:44.190391 line        47             if clientId in self.ratelimiterMap:
+12:05:44.190436 line        49             self.ratelimiterMap[clientId] = RequestTimestamps(requests,
+12:05:44.190556 line        50                                                               windowTimeInSec)
+    Source path:... rate-limit2.py
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. requests = 2
+    Starting var:.. windowTimeInSec = 60
+    12:05:44.190732 call        22     def __init__(self, requests, windowTimeInSec):
+    12:05:44.190863 line        23         self.timestamps = deque()
+    12:05:44.190915 line        24         self.lock = threading.Lock()
+    12:05:44.190960 line        25         self.requests = requests
+    12:05:44.191001 line        26         self.windowTimeInSec = windowTimeInSec
+    12:05:44.191039 line        27         self.timePerReq = float(windowTimeInSec / requests)
+    12:05:44.191079 return      27         self.timePerReq = float(windowTimeInSec / requests)
+    Return value:.. None
+12:05:44.191143 return      50                                                               windowTimeInSec)
+Return value:.. None
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+Starting var:.. requests = 5
+Starting var:.. windowTimeInSec = 60
+12:05:44.191215 call        44     def addClient(self, clientId, requests=100, windowTimeInSec=3600):
+12:05:44.191296 line        46         with self.lock:
+12:05:44.191340 line        47             if clientId in self.ratelimiterMap:
+12:05:44.191382 line        49             self.ratelimiterMap[clientId] = RequestTimestamps(requests,
+12:05:44.191422 line        50                                                               windowTimeInSec)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. requests = 5
+    Starting var:.. windowTimeInSec = 60
+    12:05:44.191475 call        22     def __init__(self, requests, windowTimeInSec):
+    12:05:44.191543 line        23         self.timestamps = deque()
+    12:05:44.191585 line        24         self.lock = threading.Lock()
+    12:05:44.191625 line        25         self.requests = requests
+    12:05:44.191663 line        26         self.windowTimeInSec = windowTimeInSec
+    12:05:44.191701 line        27         self.timePerReq = float(windowTimeInSec / requests)
+    12:05:44.191739 return      27         self.timePerReq = float(windowTimeInSec / requests)
+    Return value:.. None
+12:05:44.191807 return      50                                                               windowTimeInSec)
+Return value:.. None
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:05:44.191874 call        64     def shouldAllowServiceCall(self, clientId):
+12:05:44.191950 line        65         time.sleep(3)
+12:05:47.195435 line        66         with self.lock:
+12:05:47.195645 line        67             if clientId not in self.ratelimiterMap:
+12:05:47.195732 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:05:47.195804 line        71         with clientTimestamps.lock:
+12:05:47.195900 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430747
+12:05:47.195989 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430747
+    12:05:47.196149 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:05:47.196264 line        31         while len(self.timestamps) != 0 and (
+    12:05:47.196332 return      31         while len(self.timestamps) != 0 and (
+    Return value:.. None
+12:05:47.196450 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:05:47.196545 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:05:47.196640 line        78               requests: {2}, windowTimeInSec: {3}"
+12:05:47.196718 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:05:47.196791 line        80                           clientTimestamps.requests,
+12:05:47.196862 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430747]),               requests: 2, windowTimeInSec: 60
+12:05:47.197020 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:05:47.197108 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:05:47.197195 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:05:47.197327 call        64     def shouldAllowServiceCall(self, clientId):
+12:05:47.197459 line        65         time.sleep(3)
+12:05:50.200831 line        66         with self.lock:
+12:05:50.201025 line        67             if clientId not in self.ratelimiterMap:
+12:05:50.201111 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:05:50.201183 line        71         with clientTimestamps.lock:
+12:05:50.201279 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430750
+12:05:50.201363 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430750
+    12:05:50.201492 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:05:50.201601 line        31         while len(self.timestamps) != 0 and (
+    12:05:50.201668 return      31         while len(self.timestamps) != 0 and (
+    Return value:.. None
+12:05:50.201783 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:05:50.201863 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:05:50.201940 line        78               requests: {2}, windowTimeInSec: {3}"
+12:05:50.202015 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:05:50.202087 line        80                           clientTimestamps.requests,
+12:05:50.202157 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430750]),               requests: 5, windowTimeInSec: 60
+12:05:50.202257 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:05:50.202335 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:05:50.202418 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Success', 200, {'ext': 0})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:06:10.204208 call        64     def shouldAllowServiceCall(self, clientId):
+12:06:10.204454 line        65         time.sleep(3)
+12:06:13.208502 line        66         with self.lock:
+12:06:13.208700 line        67             if clientId not in self.ratelimiterMap:
+12:06:13.208764 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:06:13.208835 line        71         with clientTimestamps.lock:
+12:06:13.208923 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430773
+12:06:13.209013 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430773
+    12:06:13.209153 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:06:13.209270 line        31         while len(self.timestamps) != 0 and (
+    12:06:13.209344 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:06:13.209416 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:06:13.209550 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:06:13.209610 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:06:13.209658 line        78               requests: {2}, windowTimeInSec: {3}"
+12:06:13.209712 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:06:13.209769 line        80                           clientTimestamps.requests,
+12:06:13.209815 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430747, 1582430773]),               requests: 2, windowTimeInSec: 60
+12:06:13.209893 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:06:13.209946 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:06:13.210003 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:06:13.210079 call        64     def shouldAllowServiceCall(self, clientId):
+12:06:13.210153 line        65         time.sleep(3)
+12:06:16.213011 line        66         with self.lock:
+12:06:16.213278 line        67             if clientId not in self.ratelimiterMap:
+12:06:16.213362 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:06:16.213437 line        71         with clientTimestamps.lock:
+12:06:16.213524 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430776
+12:06:16.213578 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430776
+    12:06:16.213676 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:06:16.213760 line        31         while len(self.timestamps) != 0 and (
+    12:06:16.213909 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:06:16.213998 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:06:16.214104 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:06:16.214166 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:06:16.214290 line        78               requests: {2}, windowTimeInSec: {3}"
+12:06:16.214384 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:06:16.214499 line        80                           clientTimestamps.requests,
+12:06:16.214586 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430750, 1582430776]),               requests: 5, windowTimeInSec: 60
+12:06:16.214703 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:06:16.214762 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:06:16.214828 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Success', 200, {'ext': 0})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:06:36.216821 call        64     def shouldAllowServiceCall(self, clientId):
+12:06:36.217032 line        65         time.sleep(3)
+12:06:39.222092 line        66         with self.lock:
+12:06:39.222294 line        67             if clientId not in self.ratelimiterMap:
+12:06:39.222384 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:06:39.222456 line        71         with clientTimestamps.lock:
+12:06:39.222552 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430799
+12:06:39.222635 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430799
+    12:06:39.222766 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:06:39.222876 line        31         while len(self.timestamps) != 0 and (
+    12:06:39.222946 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:06:39.223017 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:06:39.223125 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:06:39.223342 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:06:39.223567 line        78               requests: {2}, windowTimeInSec: {3}"
+12:06:39.223687 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:06:39.223777 line        80                           clientTimestamps.requests,
+12:06:39.223856 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430747, 1582430773, 1582430799]),               requests: 2, windowTimeInSec: 60
+12:06:39.223960 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:06:39.224038 line        83                 return FinalRes('Rate limit exceeded. Try again in {0} seconds'
+12:06:39.224173 line        84                                 .format(clientTimestamps.timePerReq),
+12:06:39.224332 line        85                                 429, {'ext': 1})
+12:06:39.224443 return      85                                 429, {'ext': 1})
+Return value:.. FinalRes('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:06:39.224605 call        64     def shouldAllowServiceCall(self, clientId):
+12:06:39.224721 line        65         time.sleep(3)
+12:06:42.228189 line        66         with self.lock:
+12:06:42.228428 line        67             if clientId not in self.ratelimiterMap:
+12:06:42.228538 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:06:42.228661 line        71         with clientTimestamps.lock:
+12:06:42.228795 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430802
+12:06:42.228912 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430802
+    12:06:42.229191 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:06:42.229334 line        31         while len(self.timestamps) != 0 and (
+    12:06:42.229412 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:06:42.229495 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:06:42.229628 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:06:42.229717 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:06:42.229794 line        78               requests: {2}, windowTimeInSec: {3}"
+12:06:42.229868 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:06:42.229944 line        80                           clientTimestamps.requests,
+12:06:42.230019 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430750, 1582430776, 1582430802]),               requests: 5, windowTimeInSec: 60
+12:06:42.230155 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:06:42.230237 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:06:42.230322 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:07:02.233637 call        64     def shouldAllowServiceCall(self, clientId):
+12:07:02.233952 line        65         time.sleep(3)
+12:07:05.239024 line        66         with self.lock:
+12:07:05.239277 line        67             if clientId not in self.ratelimiterMap:
+12:07:05.239364 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:07:05.239436 line        71         with clientTimestamps.lock:
+12:07:05.239578 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430825
+12:07:05.239776 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430825
+    12:07:05.239932 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:07:05.240052 line        31         while len(self.timestamps) != 0 and (
+    12:07:05.240123 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:05.240191 line        33             self.timestamps.popleft()
+    12:07:05.240267 line        31         while len(self.timestamps) != 0 and (
+    12:07:05.240441 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:05.240561 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:07:05.240691 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:07:05.240780 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:07:05.240860 line        78               requests: {2}, windowTimeInSec: {3}"
+12:07:05.240934 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:07:05.241010 line        80                           clientTimestamps.requests,
+12:07:05.241089 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430773, 1582430799, 1582430825]),               requests: 2, windowTimeInSec: 60
+12:07:05.241214 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:07:05.241395 line        83                 return FinalRes('Rate limit exceeded. Try again in {0} seconds'
+12:07:05.241510 line        84                                 .format(clientTimestamps.timePerReq),
+12:07:05.241694 line        85                                 429, {'ext': 1})
+12:07:05.241896 return      85                                 429, {'ext': 1})
+Return value:.. FinalRes('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:07:05.242059 call        64     def shouldAllowServiceCall(self, clientId):
+12:07:05.242203 line        65         time.sleep(3)
+12:07:08.247322 line        66         with self.lock:
+12:07:08.247549 line        67             if clientId not in self.ratelimiterMap:
+12:07:08.247673 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:07:08.247750 line        71         with clientTimestamps.lock:
+12:07:08.247870 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430828
+12:07:08.247955 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430828
+    12:07:08.248088 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:07:08.248198 line        31         while len(self.timestamps) != 0 and (
+    12:07:08.248265 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:08.248333 line        33             self.timestamps.popleft()
+    12:07:08.248401 line        31         while len(self.timestamps) != 0 and (
+    12:07:08.248515 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:08.248729 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:07:08.248876 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:07:08.248969 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:07:08.249049 line        78               requests: {2}, windowTimeInSec: {3}"
+12:07:08.249126 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:07:08.249202 line        80                           clientTimestamps.requests,
+12:07:08.249276 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430776, 1582430802, 1582430828]),               requests: 5, windowTimeInSec: 60
+12:07:08.249376 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:07:08.249454 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:07:08.249539 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:07:28.250686 call        64     def shouldAllowServiceCall(self, clientId):
+12:07:28.250903 line        65         time.sleep(3)
+12:07:31.252820 line        66         with self.lock:
+12:07:31.253109 line        67             if clientId not in self.ratelimiterMap:
+12:07:31.253262 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:07:31.253535 line        71         with clientTimestamps.lock:
+12:07:31.253739 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430851
+12:07:31.253927 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430851
+    12:07:31.254086 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:07:31.254206 line        31         while len(self.timestamps) != 0 and (
+    12:07:31.254278 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:31.254359 line        33             self.timestamps.popleft()
+    12:07:31.254439 line        31         while len(self.timestamps) != 0 and (
+    12:07:31.254504 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:31.254568 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:07:31.254677 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:07:31.254758 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:07:31.254836 line        78               requests: {2}, windowTimeInSec: {3}"
+12:07:31.254911 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:07:31.254986 line        80                           clientTimestamps.requests,
+12:07:31.255058 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430799, 1582430825, 1582430851]),               requests: 2, windowTimeInSec: 60
+12:07:31.255158 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:07:31.255235 line        83                 return FinalRes('Rate limit exceeded. Try again in {0} seconds'
+12:07:31.255311 line        84                                 .format(clientTimestamps.timePerReq),
+12:07:31.255392 line        85                                 429, {'ext': 1})
+12:07:31.255477 return      85                                 429, {'ext': 1})
+Return value:.. FinalRes('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:07:31.255610 call        64     def shouldAllowServiceCall(self, clientId):
+12:07:31.255718 line        65         time.sleep(3)
+12:07:34.259723 line        66         with self.lock:
+12:07:34.259931 line        67             if clientId not in self.ratelimiterMap:
+12:07:34.260018 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:07:34.260091 line        71         with clientTimestamps.lock:
+12:07:34.260185 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430854
+12:07:34.260270 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430854
+    12:07:34.260414 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:07:34.260528 line        31         while len(self.timestamps) != 0 and (
+    12:07:34.260595 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:34.260666 line        33             self.timestamps.popleft()
+    12:07:34.260768 line        31         while len(self.timestamps) != 0 and (
+    12:07:34.260839 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:34.260907 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:07:34.261018 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:07:34.261098 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:07:34.261172 line        78               requests: {2}, windowTimeInSec: {3}"
+12:07:34.261245 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:07:34.261320 line        80                           clientTimestamps.requests,
+12:07:34.261394 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430802, 1582430828, 1582430854]),               requests: 5, windowTimeInSec: 60
+12:07:34.261507 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:07:34.261585 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:07:34.261668 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:07:54.264616 call        64     def shouldAllowServiceCall(self, clientId):
+12:07:54.264836 line        65         time.sleep(3)
+12:07:57.264975 line        66         with self.lock:
+12:07:57.265219 line        67             if clientId not in self.ratelimiterMap:
+12:07:57.265381 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:07:57.265511 line        71         with clientTimestamps.lock:
+12:07:57.265669 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430877
+12:07:57.265880 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430877
+    12:07:57.266123 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:07:57.266325 line        31         while len(self.timestamps) != 0 and (
+    12:07:57.266411 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:57.266483 line        33             self.timestamps.popleft()
+    12:07:57.266591 line        31         while len(self.timestamps) != 0 and (
+    12:07:57.266700 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:07:57.266876 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:07:57.267181 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:07:57.267317 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:07:57.267427 line        78               requests: {2}, windowTimeInSec: {3}"
+12:07:57.267529 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:07:57.267644 line        80                           clientTimestamps.requests,
+12:07:57.267907 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430825, 1582430851, 1582430877]),               requests: 2, windowTimeInSec: 60
+12:07:57.268217 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:07:57.268406 line        83                 return FinalRes('Rate limit exceeded. Try again in {0} seconds'
+12:07:57.268537 line        84                                 .format(clientTimestamps.timePerReq),
+12:07:57.268645 line        85                                 429, {'ext': 1})
+12:07:57.268737 return      85                                 429, {'ext': 1})
+Return value:.. FinalRes('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:07:57.268946 call        64     def shouldAllowServiceCall(self, clientId):
+12:07:57.269065 line        65         time.sleep(3)
+12:08:00.271317 line        66         with self.lock:
+12:08:00.271485 line        67             if clientId not in self.ratelimiterMap:
+12:08:00.271554 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:08:00.271700 line        71         with clientTimestamps.lock:
+12:08:00.271815 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430880
+12:08:00.271912 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430880
+    12:08:00.272047 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:08:00.272224 line        31         while len(self.timestamps) != 0 and (
+    12:08:00.272338 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:00.272465 line        33             self.timestamps.popleft()
+    12:08:00.272570 line        31         while len(self.timestamps) != 0 and (
+    12:08:00.272690 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:00.272819 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:08:00.272914 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:08:00.272971 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:08:00.273021 line        78               requests: {2}, windowTimeInSec: {3}"
+12:08:00.273080 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:08:00.273126 line        80                           clientTimestamps.requests,
+12:08:00.273179 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430828, 1582430854, 1582430880]),               requests: 5, windowTimeInSec: 60
+12:08:00.273243 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:08:00.273290 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:08:00.273340 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:08:20.273096 call        64     def shouldAllowServiceCall(self, clientId):
+12:08:20.273392 line        65         time.sleep(3)
+12:08:23.276685 line        66         with self.lock:
+12:08:23.276857 line        67             if clientId not in self.ratelimiterMap:
+12:08:23.276923 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:08:23.276978 line        71         with clientTimestamps.lock:
+12:08:23.277053 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430903
+12:08:23.277127 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430903
+    12:08:23.277227 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:08:23.277312 line        31         while len(self.timestamps) != 0 and (
+    12:08:23.277364 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:23.277415 line        33             self.timestamps.popleft()
+    12:08:23.277465 line        31         while len(self.timestamps) != 0 and (
+    12:08:23.277517 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:23.277566 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:08:23.277652 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:08:23.277713 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:08:23.277772 line        78               requests: {2}, windowTimeInSec: {3}"
+12:08:23.277829 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:08:23.277886 line        80                           clientTimestamps.requests,
+12:08:23.277942 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430851, 1582430877, 1582430903]),               requests: 2, windowTimeInSec: 60
+12:08:23.278020 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:08:23.278096 line        83                 return FinalRes('Rate limit exceeded. Try again in {0} seconds'
+12:08:23.278153 line        84                                 .format(clientTimestamps.timePerReq),
+12:08:23.278224 line        85                                 429, {'ext': 1})
+12:08:23.278289 return      85                                 429, {'ext': 1})
+Return value:.. FinalRes('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:08:23.278390 call        64     def shouldAllowServiceCall(self, clientId):
+12:08:23.278474 line        65         time.sleep(3)
+12:08:26.283500 line        66         with self.lock:
+12:08:26.283768 line        67             if clientId not in self.ratelimiterMap:
+12:08:26.283863 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:08:26.283942 line        71         with clientTimestamps.lock:
+12:08:26.284046 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430906
+12:08:26.284147 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430906
+    12:08:26.284283 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:08:26.284474 line        31         while len(self.timestamps) != 0 and (
+    12:08:26.284555 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:26.284627 line        33             self.timestamps.popleft()
+    12:08:26.284702 line        31         while len(self.timestamps) != 0 and (
+    12:08:26.284777 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:26.284854 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:08:26.284981 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:08:26.285062 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:08:26.285142 line        78               requests: {2}, windowTimeInSec: {3}"
+12:08:26.285224 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:08:26.285306 line        80                           clientTimestamps.requests,
+12:08:26.285387 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430854, 1582430880, 1582430906]),               requests: 5, windowTimeInSec: 60
+12:08:26.298572 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:08:26.298707 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:08:26.298771 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:08:46.301950 call        64     def shouldAllowServiceCall(self, clientId):
+12:08:46.302165 line        65         time.sleep(3)
+12:08:49.305890 line        66         with self.lock:
+12:08:49.306088 line        67             if clientId not in self.ratelimiterMap:
+12:08:49.306317 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:08:49.306425 line        71         with clientTimestamps.lock:
+12:08:49.306604 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430929
+12:08:49.306815 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430929
+    12:08:49.307062 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:08:49.307384 line        31         while len(self.timestamps) != 0 and (
+    12:08:49.307563 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:49.307664 line        33             self.timestamps.popleft()
+    12:08:49.307758 line        31         while len(self.timestamps) != 0 and (
+    12:08:49.307851 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:49.307925 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:08:49.308055 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:08:49.308149 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:08:49.308273 line        78               requests: {2}, windowTimeInSec: {3}"
+12:08:49.308375 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:08:49.308447 line        80                           clientTimestamps.requests,
+12:08:49.308511 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430877, 1582430903, 1582430929]),               requests: 2, windowTimeInSec: 60
+12:08:49.308596 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:08:49.308660 line        83                 return FinalRes('Rate limit exceeded. Try again in {0} seconds'
+12:08:49.308730 line        84                                 .format(clientTimestamps.timePerReq),
+12:08:49.308803 line        85                                 429, {'ext': 1})
+12:08:49.308871 return      85                                 429, {'ext': 1})
+Return value:.. FinalRes('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:08:49.308979 call        64     def shouldAllowServiceCall(self, clientId):
+12:08:49.309067 line        65         time.sleep(3)
+12:08:52.312995 line        66         with self.lock:
+12:08:52.313164 line        67             if clientId not in self.ratelimiterMap:
+12:08:52.313233 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:08:52.313289 line        71         with clientTimestamps.lock:
+12:08:52.313363 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430932
+12:08:52.313430 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430932
+    12:08:52.313531 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:08:52.313616 line        31         while len(self.timestamps) != 0 and (
+    12:08:52.313671 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:52.313725 line        33             self.timestamps.popleft()
+    12:08:52.313778 line        31         while len(self.timestamps) != 0 and (
+    12:08:52.313830 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:08:52.313892 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:08:52.313981 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:08:52.314043 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:08:52.314101 line        78               requests: {2}, windowTimeInSec: {3}"
+12:08:52.314157 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:08:52.314215 line        80                           clientTimestamps.requests,
+12:08:52.314273 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430880, 1582430906, 1582430932]),               requests: 5, windowTimeInSec: 60
+12:08:52.314353 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:08:52.314414 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:08:52.314480 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:09:12.319017 call        64     def shouldAllowServiceCall(self, clientId):
+12:09:12.319230 line        65         time.sleep(3)
+12:09:15.321027 line        66         with self.lock:
+12:09:15.321223 line        67             if clientId not in self.ratelimiterMap:
+12:09:15.321310 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:09:15.321383 line        71         with clientTimestamps.lock:
+12:09:15.321478 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430955
+12:09:15.321561 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430955
+    12:09:15.321692 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:09:15.321804 line        31         while len(self.timestamps) != 0 and (
+    12:09:15.321871 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:09:15.321937 line        33             self.timestamps.popleft()
+    12:09:15.322003 line        31         while len(self.timestamps) != 0 and (
+    12:09:15.322068 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:09:15.322133 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:09:15.322244 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:09:15.322324 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:09:15.322398 line        78               requests: {2}, windowTimeInSec: {3}"
+12:09:15.322471 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:09:15.322546 line        80                           clientTimestamps.requests,
+12:09:15.322620 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430903, 1582430929, 1582430955]),               requests: 2, windowTimeInSec: 60
+12:09:15.322722 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:09:15.322801 line        83                 return FinalRes('Rate limit exceeded. Try again in {0} seconds'
+12:09:15.322877 line        84                                 .format(clientTimestamps.timePerReq),
+12:09:15.322959 line        85                                 429, {'ext': 1})
+12:09:15.323042 return      85                                 429, {'ext': 1})
+Return value:.. FinalRes('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:09:15.323175 call        64     def shouldAllowServiceCall(self, clientId):
+12:09:15.323284 line        65         time.sleep(3)
+12:09:18.324558 line        66         with self.lock:
+12:09:18.324762 line        67             if clientId not in self.ratelimiterMap:
+12:09:18.324847 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:09:18.324919 line        71         with clientTimestamps.lock:
+12:09:18.325017 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430958
+12:09:18.325137 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430958
+    12:09:18.325273 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:09:18.325382 line        31         while len(self.timestamps) != 0 and (
+    12:09:18.325453 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:09:18.325523 line        33             self.timestamps.popleft()
+    12:09:18.325590 line        31         while len(self.timestamps) != 0 and (
+    12:09:18.325657 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:09:18.325725 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:09:18.325837 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:09:18.325916 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:09:18.325991 line        78               requests: {2}, windowTimeInSec: {3}"
+12:09:18.326076 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:09:18.326162 line        80                           clientTimestamps.requests,
+12:09:18.326237 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430906, 1582430932, 1582430958]),               requests: 5, windowTimeInSec: 60
+12:09:18.326339 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:09:18.326418 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:09:18.326502 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '01'
+12:09:38.329550 call        64     def shouldAllowServiceCall(self, clientId):
+12:09:38.329767 line        65         time.sleep(3)
+12:09:41.334668 line        66         with self.lock:
+12:09:41.334991 line        67             if clientId not in self.ratelimiterMap:
+12:09:41.335167 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862ed0>
+12:09:41.335354 line        71         with clientTimestamps.lock:
+12:09:41.335574 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430981
+12:09:41.335713 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862ed0>
+    Starting var:.. currentTimestamp = 1582430981
+    12:09:41.335916 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:09:41.336021 line        31         while len(self.timestamps) != 0 and (
+    12:09:41.336124 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:09:41.336237 line        33             self.timestamps.popleft()
+    12:09:41.336347 line        31         while len(self.timestamps) != 0 and (
+    12:09:41.336412 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:09:41.336463 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:09:41.336566 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:09:41.336637 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:09:41.336696 line        78               requests: {2}, windowTimeInSec: {3}"
+12:09:41.336781 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:09:41.336862 line        80                           clientTimestamps.requests,
+12:09:41.336935 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 01, clientTimestamps.timestamps: deque([1582430929, 1582430955, 1582430981]),               requests: 2, windowTimeInSec: 60
+12:09:41.337037 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:09:41.337126 line        83                 return FinalRes('Rate limit exceeded. Try again in {0} seconds'
+12:09:41.337202 line        84                                 .format(clientTimestamps.timePerReq),
+12:09:41.337344 line        85                                 429, {'ext': 1})
+12:09:41.337426 return      85                                 429, {'ext': 1})
+Return value:.. FinalRes('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+Starting var:.. self = <__main__.SlidingWindowRateLimiter object at 0x10f862850>
+Starting var:.. clientId = '02'
+12:09:41.337540 call        64     def shouldAllowServiceCall(self, clientId):
+12:09:41.337630 line        65         time.sleep(3)
+12:09:44.341597 line        66         with self.lock:
+12:09:44.341778 line        67             if clientId not in self.ratelimiterMap:
+12:09:44.341845 line        70         clientTimestamps = self.ratelimiterMap[clientId]
+New var:....... clientTimestamps = <__main__.RequestTimestamps object at 0x10f862c10>
+12:09:44.341909 line        71         with clientTimestamps.lock:
+12:09:44.342009 line        72             currentTimestamp = self.getCurrentTimestampInSec()
+New var:....... currentTimestamp = 1582430984
+12:09:44.342094 line        75             clientTimestamps.evictOlderTimestamps(currentTimestamp)
+    Starting var:.. self = <__main__.RequestTimestamps object at 0x10f862c10>
+    Starting var:.. currentTimestamp = 1582430984
+    12:09:44.342198 call        30     def evictOlderTimestamps(self, currentTimestamp):
+    12:09:44.342307 line        31         while len(self.timestamps) != 0 and (
+    12:09:44.342376 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:09:44.342426 line        33             self.timestamps.popleft()
+    12:09:44.342481 line        31         while len(self.timestamps) != 0 and (
+    12:09:44.342538 line        32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    12:09:44.342591 return      32                 currentTimestamp - self.timestamps[0] > self.windowTimeInSec):
+    Return value:.. None
+12:09:44.342675 line        76             clientTimestamps.timestamps.append(currentTimestamp)
+12:09:44.342738 line        77             print("clientId: {0}, clientTimestamps.timestamps: {1}, \
+12:09:44.342824 line        78               requests: {2}, windowTimeInSec: {3}"
+12:09:44.342880 line        79                   .format(clientId, clientTimestamps.timestamps,
+12:09:44.342938 line        80                           clientTimestamps.requests,
+12:09:44.343003 line        81                           clientTimestamps.windowTimeInSec))
+clientId: 02, clientTimestamps.timestamps: deque([1582430932, 1582430958, 1582430984]),               requests: 5, windowTimeInSec: 60
+12:09:44.343090 line        82             if len(clientTimestamps.timestamps) > clientTimestamps.requests:
+12:09:44.343151 line        86             return FinalRes('Success', 200, {'ext': 0})
+12:09:44.343218 return      86             return FinalRes('Success', 200, {'ext': 0})
+Return value:.. FinalRes('Success', 200, {'ext': 0})
+clientId1:01,ret1:('Rate limit exceeded. Try again in 30.0 seconds', 429, {'ext': 1})
+clientId2:02,ret2:('Success', 200, {'ext': 0})
