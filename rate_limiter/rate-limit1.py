@@ -1,17 +1,29 @@
 import redis
 import time
-from flask import Flask, jsonify, request
+import json
+from flask import Flask, request
 from functools import wraps
 
 REDIS_DB = 0
-REDIS_HOST = '172.16.4.120'
+REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 REDIS_PASSWORD = ''
-IP_LIMIT = 10
-TIME_LIMIT = 60
+IP_LIMIT = 1
+TIME_LIMIT = 36 # Default is 1 request per 36s (100request/3600s)
 
 app = Flask(__name__)
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, db=REDIS_DB, socket_timeout=3000)
+
+class FinalRes(Exception):
+    """Wrapper a class for final response"""
+    def __init__(self, code, status=200, message=None):
+        self.code = code
+        self.status = status
+        self.message = message
+
+
+def obj_to_dict(obj):
+   return obj.__dict__
 
 
 @app.before_request  # App decorator, it's going to work on every request
@@ -25,7 +37,9 @@ def before_request():
     else:
         r.incr(ip)  # Increment the numeric value stored in key by one
         if int(ip_count) > IP_LIMIT:
-            return jsonify({'code': 401, 'status': "reach the ip limit", 'message': {}})
+            res = FinalRes(429, "Failure", "Rate limit exceeded. Try again in 36 second!")
+            json_string = json.dumps(res.__dict__,  default = obj_to_dict)
+            return json.loads(json_string)
 
 
 # Decorators limit access to 10 local caches per clock
@@ -53,8 +67,9 @@ def stat_called_time(func):
             return res
         else:
             print("Rate limit exceeded")
-            return jsonify({'code': 429, 'status': "Rate limit exceeded. Try again in **
-seconds", 'message': {}})
+            res = FinalRes(429, "Failure", "Rate limit exceeded. Try again in 36 second!")
+            json_string = json.dumps(res.__dict__,  default = obj_to_dict)
+            return json.loads(json_string)
 
     return _called_time
 
@@ -62,14 +77,17 @@ seconds", 'message': {}})
 @app.route("/call")
 @stat_called_time
 def home():
-    return jsonify({'code': 200, 'status': "SUCCESS", 'message': {}})
+    res = FinalRes(200, "SUCCESS", "Response OK!")
+    json_string = json.dumps(res.__dict__,  default = obj_to_dict)
+    return json.loads(json_string)
 
 
 @app.route("/")
 def index():
-    return jsonify({'code': 200, 'status': "SUCCESS", 'message': {}})
+    res = FinalRes(200, "SUCCESS", "Response OK!")
+    json_string = json.dumps(res.__dict__,  default = obj_to_dict)
+    return json.loads(json_string)
 
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, threaded=True)
-参考文档
